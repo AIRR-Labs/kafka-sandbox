@@ -1,0 +1,41 @@
+version: '3'
+services:
+  # aiven-kafka:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - AIVEN_EMAIL=julien.bongars@airrlabs.com
+  #     - AIVEN_USERNAME=avnadmin
+  #     - AIVEN_AUTH_TOKEN=${AIVEN_AUTH_TOKEN}
+  #     - PROJECT=kafka-trial
+  #   volumes:
+  #     - ./:/work
+  #   stdin_open: true
+  #   tty: true
+  
+  aiven-kafka-producer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AIVEN_TOPIC=new_orders
+      - AIVEN_EMAIL=julien.bongars@airrlabs.com
+      - AIVEN_USERNAME=avnadmin
+      - AIVEN_AUTH_TOKEN=${AIVEN_AUTH_TOKEN}
+      - PROJECT=kafka-trial
+    command: ["/bin/bash", "-c", "/root/entrypoint.sh && /bin/bash"]
+    stdin_open: true
+    tty: true
+
+  aiven-kafka-consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AIVEN_TOPIC=new_orders
+      - AIVEN_EMAIL=julien.bongars@airrlabs.com
+      - AIVEN_USERNAME=avnadmin
+      - AIVEN_AUTH_TOKEN=${AIVEN_AUTH_TOKEN}
+      - PROJECT=kafka-trial
+    command: ["/bin/bash", "-c", "/root/entrypoint.sh && /root/consumer.sh"]
