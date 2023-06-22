@@ -6,3 +6,44 @@ services:
       dockerfile: Dockerfile
     stdin_open: true
     tty: true
+
+  karapace-registry:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint:
+      - /bin/bash
+    ports:
+      - "8081:8081"
+    environment:
+      KARAPACE_ADVERTISED_HOSTNAME: karapace-registry
+      KARAPACE_BOOTSTRAP_URI:  ${KAFKA_URL}:${KAFKA_PORT}
+      KARAPACE_PORT: 8081
+      KARAPACE_HOST: 0.0.0.0
+      KARAPACE_CLIENT_ID: karapace
+      KARAPACE_GROUP_ID: karapace-registry
+      KARAPACE_MASTER_ELIGIBILITY: "true"
+      KARAPACE_TOPIC_NAME: _schemas
+      KARAPACE_LOG_LEVEL: WARNING
+      KARAPACE_COMPATIBILITY: FULL
+
+  karapace-rest:
+    image: ghcr.io/aiven/karapace:develop
+    build:
+      context: ..
+      dockerfile: container/Dockerfile
+    entrypoint:
+      - /bin/bash
+    depends_on:
+      - karapace-registry
+    ports:
+      - "8082:8082"
+    environment:
+      KARAPACE_PORT: 8082
+      KARAPACE_HOST: 0.0.0.0
+      KARAPACE_ADVERTISED_HOSTNAME: karapace-rest
+      KARAPACE_BOOTSTRAP_URI:  ${KAFKA_URL}:${KAFKA_PORT}
+      KARAPACE_REGISTRY_HOST: karapace-registry
+      KARAPACE_REGISTRY_PORT: 8081
+      KARAPACE_ADMIN_METADATA_MAX_AGE: 0
+      KARAPACE_LOG_LEVEL: WARNING
