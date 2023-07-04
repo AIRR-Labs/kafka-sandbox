@@ -1,7 +1,7 @@
 FROM python:3.11-bullseye
 
 RUN apt-get update && apt-get upgrade
-RUN apt-get install -y curl scala
+RUN apt-get install -y curl scala dos2unix
 
 WORKDIR /root
 
@@ -22,5 +22,6 @@ COPY ./entrypoint.sh /root/entrypoint.sh
 COPY ./configuration.properties /root/configuration.properties
 COPY ./consumer.sh /root/consumer.sh
 COPY ./producer.sh /root/producer.sh
+RUN dos2unix *
 
 CMD [ "/bin/bash", "-c", "./entrypoint.sh && fish" ]

@@ -13,6 +13,22 @@ services:
   #     - ./:/work
   #   stdin_open: true
   #   tty: true
+
+  aiven-kafka-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AIVEN_TOPIC=new_orders
+      - AIVEN_EMAIL=julien.bongars@airrlabs.com
+      - AIVEN_USERNAME=avnadmin
+      - AIVEN_AUTH_TOKEN=${AIVEN_AUTH_TOKEN}
+      - PROJECT=kafka-trial
+    command: ["/bin/bash", "-c", "/root/entrypoint.sh && /bin/bash"]
+    volumes:
+      - ./:/work
+    stdin_open: true
+    tty: true
   
   aiven-kafka-producer:
     build:
